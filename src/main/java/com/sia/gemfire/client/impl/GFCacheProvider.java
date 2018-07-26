@@ -23,7 +23,6 @@ public class GFCacheProvider {
                             .addPoolLocator(GFCacheConfig.LOCATOR_HOST, GFCacheConfig.LOCATOR_PORT)
                             .set("log-level", GFCacheConfig.LOG_LEVEL)
                             .set("log-file", GFCacheConfig.LOG_FILE_PATH)
-                            .set("deploy-working-dir", "/home/nilkanth/xxxx")
                             .create();
                 }
             }
