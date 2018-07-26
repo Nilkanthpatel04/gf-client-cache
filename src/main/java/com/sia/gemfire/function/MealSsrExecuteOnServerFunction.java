@@ -58,7 +58,6 @@ public class MealSsrExecuteOnServerFunction implements Function, Serializable {
 
         logger.info("TEST Request Params ["+ passengerId + ", " + isKF + ", " + departureDate + ", " + cabinClass + ", " + carrierCode + ", " + channel + "]");
 
-        String commonFilter =  "((src_stm_id=12 and ssr_tp like '%ML') OR (src_stm_id = 43 and ssr_supr_type in set('2','4')))";
         String query1 = null;
         //RUID case
         if(isKF == false) {
@@ -88,7 +87,7 @@ public class MealSsrExecuteOnServerFunction implements Function, Serializable {
             query1 = query1 + " AND " + "cr_code = " + "'" + carrierCode + "'";
         }
 
-        query1 = query1 + " AND " + commonFilter;
+        //query1 = query1 + " AND " + commonFilter;
         logger.info("NNN generated OQL for /passenger => " + query1);
 
         List<PassengerItinerary> pItinList = retrievePaxItins(query1, cache, fc);
@@ -121,7 +120,7 @@ public class MealSsrExecuteOnServerFunction implements Function, Serializable {
         Timestamp pnrCrtnDt = Timestamp.valueOf(pItin.getPnrCrtnDt());
         Integer tattooNbr = Integer.parseInt(pItin.getTattooNbr());
         Integer segTattooNbr = Integer.parseInt(pItin.getSegTattooNbr());
-
+        String commonFilter =  " AND ((src_stm_id=12 and ssr_tp like '%ML') OR (src_stm_id = 43 and ssr_supr_type in set('2','4')))";
         String oql = null;
         if(tattooNbr == null && segTattooNbr == null){
             oql = "select * from /passengerSSR c where " +
@@ -145,6 +144,7 @@ public class MealSsrExecuteOnServerFunction implements Function, Serializable {
                     "c.seg_tattoo_nbr=" + segTattooNbr ;
         }
 
+        oql += commonFilter;
         logger.info("OQL on passengerSSR = > " + oql);
         // Get QueryService from Cache.
         QueryService queryService = cache.getQueryService();
