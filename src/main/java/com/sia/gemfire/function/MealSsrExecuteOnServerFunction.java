@@ -65,7 +65,7 @@ public class MealSsrExecuteOnServerFunction implements Function, Serializable {
             query1 = "select  b.acc_nbr, b.sk_free_txt, b.cst_nbr, b.pnr_loc, b.pnr_crtn_dt, b.tattoo_nbr, " +
                     "b.seg_tattoo_nbr,  b.flt_nbr ,   b.dep_dt ,   b.bd_pnt ,   b.off_pnt, " +
                     "b.cb_cls " +
-                    "from   /passenger b  where b.sk_keyword= 'RUID'" +
+                    "from   /passenger b  where b.sk_keyword= 'RUID' " +
                     "b.sk_free_txt = " + "'" + passengerId + "'";
         }else {
             //KF query
