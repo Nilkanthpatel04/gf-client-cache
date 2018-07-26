@@ -58,11 +58,38 @@ public class MealSsrExecuteOnServerFunction implements Function, Serializable {
 
         logger.info("TEST Request Params ["+ passengerId + ", " + isKF + ", " + departureDate + ", " + cabinClass + ", " + carrierCode + ", " + channel + "]");
 
-        String query1 = "select  b.acc_nbr, b.sk_free_txt, b.cst_nbr, b.pnr_loc, b.pnr_crtn_dt, b.tattoo_nbr, " +
-                "b.seg_tattoo_nbr,  b.flt_nbr ,   b.dep_dt ,   b.bd_pnt ,   b.off_pnt, " +
-                "b.cb_cls "+
-                "from   /passenger b  where " +
-                "b.acc_nbr = " + "'" + passengerId + "'" ;
+        String commonFilter =  "((src_stm_id=12 and ssr_tp like '%ML') OR (src_stm_id = 43 and ssr_supr_type in set('2','4')))";
+        String query1 = null;
+        //RUID case
+        if(isKF == false) {
+            query1 = "select  b.acc_nbr, b.sk_free_txt, b.cst_nbr, b.pnr_loc, b.pnr_crtn_dt, b.tattoo_nbr, " +
+                    "b.seg_tattoo_nbr,  b.flt_nbr ,   b.dep_dt ,   b.bd_pnt ,   b.off_pnt, " +
+                    "b.cb_cls " +
+                    "from   /passenger b  where b.sk_keyword= 'RUID'" +
+                    "b.sk_free_txt = " + "'" + passengerId + "'";
+        }else {
+            //KF query
+            query1 = "select  b.acc_nbr, b.sk_free_txt, b.cst_nbr, b.pnr_loc, b.pnr_crtn_dt, b.tattoo_nbr, " +
+                    "b.seg_tattoo_nbr,  b.flt_nbr ,   b.dep_dt ,   b.bd_pnt ,   b.off_pnt, " +
+                    "b.cb_cls " +
+                    "from   /passenger b  where " +
+                    "b.acc_nbr = " + "'" + passengerId + "'";
+        }
+
+        if(departureDate != null){
+            query1 = query1 + " AND " + "dep_dt >=" +  "'" + departureDate + "'";
+        }
+
+        if(cabinClass != null){
+           query1 = query1 + " AND " + "cb_cls = " + "'" + cabinClass + "'";
+        }
+
+        if(carrierCode != null){
+            query1 = query1 + " AND " + "cr_code = " + "'" + carrierCode + "'";
+        }
+
+        query1 = query1 + " AND " + commonFilter;
+        logger.info("NNN generated OQL for /passenger => " + query1);
 
         List<PassengerItinerary> pItinList = retrievePaxItins(query1, cache, fc);
 
